@@ -1,0 +1,19 @@
+sources:
+  my_source:
+    type: "file"
+    include: ["/var/log/yum.log"]  
+    ignore_older: 86400  
+
+transforms:
+  my_transform:
+    type: "remap"
+    inputs: ["my_source"]
+    source: |
+      .level = "info"
+
+sinks:
+  my_sink:
+    type: "console"
+    inputs: ["my_transform"]
+    encoding:
+      codec: "json"
