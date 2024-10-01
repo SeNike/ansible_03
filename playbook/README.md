@@ -1,76 +1,76 @@
-# Ansible Playbook for Installing Clickhouse and Vector
+# Ansible Playbook: Установка ClickHouse, Vector, Nginx и Lighthouse
 
-## Overview
+Этот Ansible playbook автоматизирует установку и конфигурацию трех сервисов: **ClickHouse**, **Vector** и **Nginx с Lighthouse**. Каждый сервис устанавливается на разных хостах и управляется через обработчики Ansible.
 
-This Ansible playbook automates the installation and configuration of Clickhouse and Vector on designated hosts. It consists of two main parts:
+## Обзор Playbook
 
-1. **Clickhouse Installation**: Downloads and installs the specified versions of Clickhouse packages, creates a database, and restarts the Clickhouse service.
-2. **Vector Installation**: Downloads and installs Vector, deploys its configuration files, and manages its service.
+### 1. Установка ClickHouse
+Устанавливает и настраивает базу данных ClickHouse на хосте `clickhouse`.
 
-## Requirements
+- **Tasks**:
+  - Загрузка пакетов ClickHouse.
+  - Установка загруженных пакетов.
+  - Создание базы данных `logs`.
+  
+- **Handlers**:
+  - Запуск или перезапуск сервиса ClickHouse.
 
-- Ansible (version 2.9 or later)
-- Hosts defined in inventory/prod.yml  with appropriate permissions
+### 2. Установка Vector
+Устанавливает инструмент наблюдения Vector на хосте `vector`.
 
-## Parameters
+- **Tasks**:
+  - Загрузка пакета Vector.
+  - Установка пакета и настройка сервиса.
+  - Развертывание конфигурации Vector.
+  
+- **Handlers**:
+  - Запуск сервиса Vector.
 
-### Clickhouse Parameters
+### 3. Установка Nginx и Lighthouse
+Устанавливает Nginx и настраивает инструмент мониторинга Lighthouse на хосте `lighthouse`.
 
-- `clickhouse_version`: The version of Clickhouse to install.
-- `clickhouse_packages`: A list of Clickhouse packages to download (e.g., `["clickhouse-client", "clickhouse-server"]`).
+- **Tasks**:
+  - Установка Nginx.
+  - Настройка Nginx.
+  - Настройка Lighthouse путем клонирования исходного кода и применения необходимых конфигураций.
+  
+- **Handlers**:
+  - Запуск или перезапуск сервиса Nginx.
 
-### Vector Parameters
+## Параметры Playbook
 
-- `vector_version`: The version of Vector to install.
+### Параметры ClickHouse
+- **`clickhouse_version`**: Версия ClickHouse для установки.
+- **`clickhouse_packages`**: Список пакетов ClickHouse для загрузки (`clickhouse-client`, `clickhouse-server` и т.д.).
 
-### Inventory Hosts
+### Параметры Vector
+- **`vector_version`**: Версия Vector для установки.
 
-- `clickhouse`: The group of hosts where Clickhouse will be installed.
-- `vector`: The group of hosts where Vector will be installed.
+### Параметры Lighthouse
+- **`lighthouse_vcs`**: URL репозитория Git для исходного кода Lighthouse.
+- **`lighthouse_location_dir`**: Директория, в которой будет установлен Lighthouse.
 
 ## Tags
+Теги могут быть применены при запуске playbook для выполнения определенных частей:
+- **`clickhouse`**: Установить ClickHouse и настроить его сервис.
+- **`vector`**: Установить Vector и настроить его сервис.
+- **`nginx`**: Установить и настроить Nginx.
+- **`lighthouse`**: Настроить инструмент мониторинга Lighthouse.
 
-- **clickhouse**: Use this tag to run only the tasks related to Clickhouse installation.
-- **vector**: Use this tag to run only the tasks related to Vector installation.
-- **install**: General tag for both installations.
+### Пример использования
 
-## Usage
-
-To execute the playbook, run the following command:
-
+Чтобы запустить весь playbook:
 ```bash
-ansible-playbook -i inventory/prod.yml site.yml
+ansible-playbook ansible-playbook -i inventory/prod.yml site.yml
 ```
-
+To run only the ClickHouse part:
+```
+ansible-playbook playbook.yml ansible-playbook -i inventory/prod.yml site.yml --tags clickhouse
+```
 ## Handlers
-
-- Start Clickhouse Service: Restarts the Clickhouse service after installation or configuration changes.
-- Start Vector Service: Starts the Vector service after installation or configuration changes.
-
-## Error Handling
-
-The playbook includes error handling to manage failures gracefully:
-
-- The Clickhouse installation block will attempt to download a static package if the specified packages fail to download.
-- The database creation command will not fail if the database already exists (checks for error code 82).
-
-## Templates
-- templates/vector.yml.j2: Template for the Vector configuration file.
-________________________________________________________________________________________________________________________________
-# Домашнее задание к занятию 2 «Работа с Playbook»
-
-Запустите ansible-lint site.yml и исправьте ошибки, если они есть.
-
-![img](https://github.com/SeNike/Study_24/blob/main/ansible-02/2.1.png)
-
-Попробуйте запустить playbook на этом окружении с флагом --check.
-
-![img](https://github.com/SeNike/Study_24/blob/main/ansible-02/2.2.png)
-
-Запустите playbook на prod.yml окружении с флагом --diff. Убедитесь, что изменения на системе произведены.
-
-![img](https://github.com/SeNike/Study_24/blob/main/ansible-02/2.3.png)
-
-Повторно запустите playbook с флагом --diff и убедитесь, что playbook идемпотентен.
-
-![img](https://github.com/SeNike/Study_24/blob/main/ansible-02/2.4.png)
+- ClickHouse: Start clickhouse service — Обеспечивает перезапуск сервиса ClickHouse после установки.
+- Vector: Start vector service — Запускает сервис Vector после установки и настройки.
+- Nginx:
+    - start-nginx — Запускает или перезапускает сервис Nginx после изменений конфигурации.
+    - restart-nginx — Перезагружает или перезапускает сервис Nginx после применения конфигурации Lighthouse.
+Этот playbook упрощает развертывание этих сервисов с предопределенными параметрами и конфигурациями.

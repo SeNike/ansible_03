@@ -128,19 +128,23 @@
       ansible.builtin.file:
         path: /var/www/lighthouse
         state: directory
-        recurse: yes
-        mode: '0755'
         owner: nginx
         group: nginx
-    - name: Set available
-      become: true
-      ansible.builtin.command: "chcon -R -t httpd_sys_content_t /var/www/lighthouse"   
+        mode: '0755'
+        selevel: s0
+        serole: object_r
+        setype: httpd_sys_content_t
+        seuser: unconfined_u      
+#    - name: Set available
+#      become: true
+#      ansible.builtin.command: "chcon -R -t httpd_sys_content_t /var/www/lighthouse"   
     - name: Lighthouse | Clone from Git
       become: true
       ansible.builtin.git:
         repo: "{{ lighthouse_vcs }}"
         version: master
         dest: "{{ lighthouse_location_dir }}"
+        force: yes
     - name: Lighthouse | Create lighthouse config
       become: true
       ansible.builtin.template:

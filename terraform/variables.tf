@@ -25,83 +25,34 @@ variable "default_cidr" {
   description = "https://cloud.yandex.ru/docs/vpc/operations/subnet-create"
 }
 
-variable "ssh_key" {
-  type        = string
-  description = "ssh_key"
-}
-
 variable "vpc_name" {
   type        = string
   default     = "develop"
   description = "VPC network&subnet name"
 }
 
-variable "vm_web_image" {
+variable "vm_image" {
   type        = string
-  default     = "ubuntu-2004-lts"
+  default     = "centos-7-oslogin"
   description = "VM OS image"
 }
 
 variable "hdd_vol_size" {
   type = number
-  default = 1
+  default = 10
   description = "HDD volume size"
 }
 
-variable "hdd_quantity" {
-  type = number
-  default = 3
-  description = "quantity of HDD"
-}
-
-variable "web_inst_quantity" {
-  type = number
-  default = 2
-  description = "web wm instance quntity"
-}
-
-variable "web_platform" {
+variable "platform" {
   type        = string
   default     = "standard-v3"
   description = "WM Platform"
 }
-
-variable "storage_platform" {
-  type        = string
-  default     = "standard-v3"
-  description = "WM Platform"
-}
-
-
-variable "each_platform" {
-  type        = string
-  default     = "standard-v3"
-  description = "WM Platform"
-}
-
 
 variable "storage_disk_type" {
   type        = string
   default     = "network-hdd"
   description = "storage_disk_type"
-}
-
-variable "each_nat" {
-  type        = bool
-  default     = true
-  description = "nat enable"
-}
-
-variable "web_nat" {
-  type        = bool
-  default     = true
-  description = "nat enable"
-}
-
-variable "storage_nat" {
-  type        = bool
-  default     = true
-  description = "nat enable"
 }
 
 variable "username" {
@@ -114,8 +65,58 @@ variable "ssh_public_key" {
   default = "~/.ssh/id_rsa.pub"
 }
 
-variable "packages" {
-  type = list(string)
-  default = ["nano"]
+#clickhouse
+variable "clickhouse_cores" {
+  type = number
+  default = 2
+  description = "Processor cores"
+}
+
+variable "clickhouse_memory" {
+  type = number
+  default = 4
+  description = "Memory"
+}
+
+variable "clickhouse_core_fraction" {
+  type = number
+  default = 20
+  description = "Processor cores"
+}
+#vector
+variable "vector_cores" {
+  type = number
+  default = 2
+  description = "Processor cores"
+}
+
+variable "vector_memory" {
+  type = number
+  default = 4
+  description = "Memory"
+}
+
+variable "vector_core_fraction" {
+  type = number
+  default = 20
+  description = "Processor cores"
+}
+#lighthouse
+variable "lighthouse_cores" {
+  type = number
+  default = 2
+  description = "Processor cores"
+}
+
+variable "lighthouse_memory" {
+  type = number
+  default = 2
+  description = "Memory"
+}
+
+variable "lighthouse_core_fraction" {
+  type = number
+  default = 20
+  description = "Processor cores"
 }
 
